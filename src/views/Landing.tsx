@@ -19,7 +19,7 @@ const amenitiesData = [
 const galleryData = ["/g1.jpeg", "/g3.jpeg", "/g2.jpeg", "/g4.jpeg","/g6.jpeg","/g5.jpeg"];
 
 // ✅ Put brochure in /public as brochure.pdf
-const BROCHURE_URL = "/brochure.pdf";
+const BROCHURE_URL = "";
 
 // ✅ update these if needed
 const PHONE = "+919820462628";
@@ -160,7 +160,6 @@ export default function LandingPage() {
 
       const action = opts?.downloadAfter ?? leadAction;
       if (action === "brochure") {
-        triggerDownload(BROCHURE_URL, "brochure.pdf");
       } else if (action === "masterplan") {
         // triggerDownload("/masterplan.pdf", "masterplan.pdf");
       } else if (action === "costing") {
