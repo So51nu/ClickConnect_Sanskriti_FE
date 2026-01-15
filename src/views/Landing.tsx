@@ -3,28 +3,39 @@ import React, { useMemo, useEffect, useRef, useState } from "react";
 import { postEnquiry } from "../api";
 
 // ==========================================
-// 1. IMAGE PATHS SECTION
+// 1) PROJECT CONFIG (UPDATED AS PER YOUR CONTENT + PDFs)
 // ==========================================
-const IMAGE_PATHS: string[] = ["/back1.jpeg", "/g7.jpeg", "/back3.jpeg","/g6.jpeg"];
+const PROJECT_NAME = "Sanskriti by Jem World Group";
+const PROJECT_SUB = "Exclusive 3 BHK Villa Floors • One Floor, One Apartment";
+const LOCATION_LINE = "Daulat Nagar, Borivali East, Mumbai 400066";
 
+// Hero slider images (your existing)
+const IMAGE_PATHS: string[] = ["/back1.jpeg", "/g7.jpeg", "/back3.jpeg", "/g6.jpeg"];
+
+// Amenities / Gallery (your existing)
 const amenitiesData = [
-  { title: "SQUASH COURT", img: "/g1.jpeg" },
+  { title: "Looby", img: "/g1.jpeg" },
   { title: "GYM", img: "/g2.jpeg" },
-  { title: "Washroom", img: "/g5.jpeg" },
-  { title: "AMPHITHEATRE", img: "/g3.jpeg" },
-  { title: "INFINITY POOL", img: "/g4.jpeg" },
-  { title: "LIBRARY", img: "/g6.jpeg" },
+ 
+  { title: "Powder Washroom", img: "/powderwashroom.jpeg" },
+  { title: "Open View", img: "/g3.jpeg" },
+  { title: "Bedroom", img: "/Bedroom.jpeg" },
+  { title: "Lift", img: "/lift.jpeg" },
 ];
 
-const galleryData = ["/g1.jpeg", "/g3.jpeg", "/g2.jpeg", "/g4.jpeg","/g6.jpeg","/g5.jpeg"];
+const galleryData = ["/g1.jpeg", "/g3.jpeg", "/g2.jpeg", "/g4.jpeg", "/g6.jpeg", "/g5.jpeg"];
 
 // ✅ Put brochure in /public as brochure.pdf
-const BROCHURE_URL = "";
+const BROCHURE_URL = "/brochure.pdf"; // FIXED
+
+// (Optional) if you have these PDFs later, put them in /public and update:
+const MASTERPLAN_URL = ""; // e.g. "/masterplan.pdf"
+const COSTING_URL = ""; // e.g. "/price-sheet.pdf"
 
 // ✅ update these if needed
-const PHONE = "+919820462628";
-const WHATSAPP_NUMBER = "9004871755"; // without +
-const WHATSAPP_TEXT = encodeURIComponent("Hi, I want details for Sanskriti  Residences.");
+const PHONE = "+919004183975";
+const WHATSAPP_NUMBER = "9004183975"; // without +
+const WHATSAPP_TEXT = encodeURIComponent(`Hi, I want details for ${PROJECT_NAME}.`);
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -39,6 +50,7 @@ const inputStyle: React.CSSProperties = {
 type LeadAction = "brochure" | "costing" | "masterplan" | "callback" | "generic";
 
 function triggerDownload(url: string, filename?: string) {
+  if (!url) return;
   try {
     const a = document.createElement("a");
     a.href = url;
@@ -104,7 +116,7 @@ export default function LandingPage() {
       setIsMobile(width <= 768);
       setIsTablet(width > 768 && width <= 1024);
     };
-    
+
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -159,11 +171,14 @@ export default function LandingPage() {
       setForm({ name: "", mobile: "", email: "" });
 
       const action = opts?.downloadAfter ?? leadAction;
+
+      // ✅ Download after successful submit (fixed)
       if (action === "brochure") {
+        if (BROCHURE_URL) triggerDownload(BROCHURE_URL, "Sanskriti-Brochure.pdf");
       } else if (action === "masterplan") {
-        // triggerDownload("/masterplan.pdf", "masterplan.pdf");
+        if (MASTERPLAN_URL) triggerDownload(MASTERPLAN_URL, "Sanskriti-Masterplan.pdf");
       } else if (action === "costing") {
-        // triggerDownload("/costing.pdf", "costing.pdf");
+        if (COSTING_URL) triggerDownload(COSTING_URL, "Sanskriti-Price-Sheet.pdf");
       }
 
       if (opts?.autoCloseModal) setShowLeadModal(false);
@@ -347,6 +362,12 @@ export default function LandingPage() {
     </div>
   );
 
+  // ✅ Pricing data as per your content
+  const pricingRows = [
+    { type: "3 BHK Villa Floor", area: "1002 sq.ft", price: "₹ 2.80 Cr Onwards*" },
+    { type: "3 BHK Villa Floor", area: "1155 sq.ft", price: "₹ 2.80 Cr Onwards*" },
+  ];
+
   return (
     <div
       style={{
@@ -358,8 +379,7 @@ export default function LandingPage() {
         overflow: isMobile || isTablet ? "visible" : "hidden",
         fontFamily: "Arial, sans-serif",
         backgroundColor: "#fff",
-        // ✅ mobile bottom bar space
-        paddingBottom: isMobile ? 78 : 0,
+        paddingBottom: isMobile ? 78 : 0, // ✅ mobile bottom bar space
       }}
     >
       <style>{`
@@ -414,7 +434,6 @@ export default function LandingPage() {
           .mobile-tablet-only { display: none !important; }
         }
 
-        /* Animation for mobile menu */
         @keyframes slideIn {
           from { transform: translateX(100%); }
           to { transform: translateX(0); }
@@ -514,24 +533,12 @@ export default function LandingPage() {
         )}
 
         {/* LOGO */}
-        <div style={{ 
-          width: isMobile ? "140px" : "180px", 
-          paddingLeft: isMobile ? "10px" : "20px" 
-        }}>
-          <div style={{ 
-            color: "#003366", 
-            fontWeight: "bold", 
-            fontSize: isMobile ? "18px" : "22px", 
-            lineHeight: "1" 
-          }}>
+        <div style={{ width: isMobile ? "170px" : "220px", paddingLeft: isMobile ? "10px" : "20px" }}>
+          <div style={{ color: "#003366", fontWeight: "bold", fontSize: isMobile ? "16px" : "20px", lineHeight: "1.1" }}>
             Sanskriti
           </div>
-          <div style={{ 
-            color: "#666", 
-            fontSize: isMobile ? "9px" : "11px", 
-            letterSpacing: "2px" 
-          }}>
-            Realty
+          <div style={{ color: "#666", fontSize: isMobile ? "9px" : "11px", letterSpacing: "2px" }}>
+            {LOCATION_LINE}
           </div>
         </div>
 
@@ -722,7 +729,7 @@ export default function LandingPage() {
           >
             ×
           </button>
-          
+
           {[
             { label: "Home", id: "home", icon: "🏠" },
             { label: "Price", id: "price", icon: "💰" },
@@ -754,7 +761,7 @@ export default function LandingPage() {
               {item.label}
             </button>
           ))}
-          
+
           <button
             onClick={() => {
               openLead("brochure");
@@ -780,7 +787,7 @@ export default function LandingPage() {
             <span style={{ fontSize: "20px" }}>📄</span>
             Download Brochure
           </button>
-          
+
           <a
             href="/admin"
             style={{
@@ -804,13 +811,9 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* MAIN LAYOUT - SPLIT PANE FOR DESKTOP, STACKED FOR MOBILE/TABLET */}
-      <div className="layout-wrap" style={{ 
-        display: "flex", 
-        flex: 1, 
-        overflow: isMobile || isTablet ? "visible" : "hidden" 
-      }}>
-        {/* LEFT SIDE - CONTENT */}
+      {/* MAIN LAYOUT */}
+      <div className="layout-wrap" style={{ display: "flex", flex: 1, overflow: isMobile || isTablet ? "visible" : "hidden" }}>
+        {/* LEFT SIDE */}
         <div
           className="hide-scroll left-pane"
           style={{
@@ -819,7 +822,7 @@ export default function LandingPage() {
             overflowY: isMobile || isTablet ? "visible" : "auto",
           }}
         >
-          {/* MOBILE/TABLET HERO - FULL BACKGROUND IMAGE */}
+          {/* MOBILE/TABLET HERO */}
           {(isMobile || isTablet) ? (
             <section
               id="home"
@@ -834,7 +837,6 @@ export default function LandingPage() {
                 position: "relative",
               }}
             >
-              {/* BACKGROUND IMAGE */}
               <img
                 src={IMAGE_PATHS[currentImg]}
                 alt="Hero"
@@ -848,8 +850,6 @@ export default function LandingPage() {
                   zIndex: 1,
                 }}
               />
-              
-              {/* CONTENT OVERLAY */}
               <div
                 style={{
                   position: "absolute",
@@ -857,13 +857,13 @@ export default function LandingPage() {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  background: "rgba(0,0,0,0.4)",
+                  background: "rgba(0,0,0,0.42)",
                   zIndex: 2,
                 }}
               />
             </section>
           ) : (
-            /* DESKTOP HERO - BACKGROUND WITH CARD OVERLAY */
+            /* DESKTOP HERO */
             <section
               className="hero-pad"
               style={{
@@ -876,11 +876,10 @@ export default function LandingPage() {
                 padding: "30px",
               }}
             >
-              {/* Card (desktop) - Exactly like your original */}
               <div
                 style={{
                   backgroundColor: "#ffffff",
-                  width: "320px",
+                  width: "340px",
                   borderRadius: "8px",
                   boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
                   overflow: "hidden",
@@ -893,31 +892,31 @@ export default function LandingPage() {
                     color: "#fff",
                     padding: "10px",
                     textAlign: "center",
-                    fontWeight: 700,
+                    fontWeight: 800,
                     fontSize: "13px",
                   }}
                 >
-                  Booking Open: Limited Time Only
+                  70% Work Completed • Possession: Dec 2026
                 </div>
 
                 <div style={{ padding: "18px", textAlign: "center" }}>
-                  <h2 style={{ fontSize: "24px", margin: "0 0 8px", fontWeight: 800 }}>
-                    Sanskriti Linkbay Residences
+                  <h2 style={{ fontSize: "22px", margin: "0 0 8px", fontWeight: 900, lineHeight: 1.2 }}>
+                    {PROJECT_NAME}
                   </h2>
 
                   <div
                     style={{
                       backgroundColor: "#7b3f52",
                       color: "#fff",
-                      padding: "6px 14px",
+                      padding: "6px 12px",
                       borderRadius: "6px",
                       fontSize: "12px",
-                      fontWeight: 700,
+                      fontWeight: 800,
                       display: "inline-block",
-                      marginBottom: "14px",
+                      marginBottom: "12px",
                     }}
                   >
-                    New SEA VIEW Tower Launch
+                    {PROJECT_SUB}
                   </div>
 
                   <div
@@ -925,18 +924,18 @@ export default function LandingPage() {
                       backgroundColor: "#f2f2f2",
                       padding: "10px",
                       borderRadius: "6px",
-                      fontSize: "14px",
+                      fontSize: "13px",
                       marginBottom: "14px",
                       textAlign: "left",
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>Land Parcel</span>
-                      <strong>2.5 acres</strong>
+                      <span>Sizes</span>
+                      <strong>1002 & 1155 sq.ft</strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px" }}>
-                      <span>Floors</span>
-                      <strong>G+26 Floors</strong>
+                      <span>Configuration</span>
+                      <strong>3 Master Bedrooms</strong>
                     </div>
                   </div>
 
@@ -948,24 +947,22 @@ export default function LandingPage() {
                       padding: "14px",
                       borderRadius: "6px",
                       fontSize: "13px",
-                      fontWeight: 700,
-                      lineHeight: "1.6",
+                      fontWeight: 800,
+                      lineHeight: "1.55",
                       marginBottom: "14px",
                     }}
                   >
-                    Pay 20% Now & Nothing For 24 Months
-                    <br />
-                    Spot Booking Offers Available
-                    <br />
-                    Get Exclusive Early Buy Discounts
+                    Pay Just <b>10%</b> Now <br />
+                    Enjoy <b>NO EMI</b> Till Possession <br />
+                    10:90 / Flexi Payment Options
                   </div>
 
                   <div style={{ fontSize: "13px", color: "#555", marginBottom: "6px" }}>
-                    Ultra Luxury <strong>3 & 4 BHK</strong> RESIDENCES Starting At
+                    Starting From
                   </div>
 
-                  <div style={{ fontSize: "30px", fontWeight: 800 }}>
-                    ₹ 4.99 Cr* <span style={{ fontSize: "14px", fontWeight: 500 }}>Onwards</span>
+                  <div style={{ fontSize: "30px", fontWeight: 900 }}>
+                    ₹ 2.80 Cr* <span style={{ fontSize: "14px", fontWeight: 600 }}>Onwards</span>
                   </div>
 
                   <button
@@ -978,7 +975,7 @@ export default function LandingPage() {
                       width: "100%",
                       marginTop: "16px",
                       cursor: "pointer",
-                      fontWeight: 800,
+                      fontWeight: 900,
                       borderRadius: "6px",
                       fontSize: "14px",
                     }}
@@ -990,7 +987,7 @@ export default function LandingPage() {
             </section>
           )}
 
-          {/* MOBILE/TABLET: CONTENT CARD AFTER HERO IMAGE */}
+          {/* MOBILE/TABLET: CONTENT CARD AFTER HERO */}
           {(isMobile || isTablet) && (
             <div
               style={{
@@ -1003,7 +1000,6 @@ export default function LandingPage() {
                 boxShadow: "0 -10px 30px rgba(0,0,0,0.1)",
               }}
             >
-              {/* Booking Card */}
               <div
                 style={{
                   backgroundColor: "#ffffff",
@@ -1021,31 +1017,31 @@ export default function LandingPage() {
                     color: "#fff",
                     padding: "12px",
                     textAlign: "center",
-                    fontWeight: 700,
+                    fontWeight: 900,
                     fontSize: "14px",
                   }}
                 >
-                  Booking Open: Limited Time Only
+                  70% Work Completed • Possession: Dec 2026
                 </div>
 
                 <div style={{ padding: "20px", textAlign: "center" }}>
-                  <h2 style={{ fontSize: "22px", margin: "0 0 10px", fontWeight: 800 }}>
-                    Sanskriti Linkbay Residences
+                  <h2 style={{ fontSize: "20px", margin: "0 0 10px", fontWeight: 900, lineHeight: 1.2 }}>
+                    {PROJECT_NAME}
                   </h2>
 
                   <div
                     style={{
                       backgroundColor: "#7b3f52",
                       color: "#fff",
-                      padding: "8px 16px",
+                      padding: "8px 14px",
                       borderRadius: "8px",
                       fontSize: "13px",
-                      fontWeight: 700,
+                      fontWeight: 900,
                       display: "inline-block",
-                      marginBottom: "16px",
+                      marginBottom: "14px",
                     }}
                   >
-                    New SEA VIEW Tower Launch
+                    {PROJECT_SUB}
                   </div>
 
                   <div
@@ -1059,12 +1055,12 @@ export default function LandingPage() {
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span>Land Parcel</span>
-                      <strong>2.5 acres</strong>
+                      <span>Sizes</span>
+                      <strong>1002 & 1155 sq.ft</strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>Floors</span>
-                      <strong>G+26 Floors</strong>
+                      <span>Layout</span>
+                      <strong>3-side open</strong>
                     </div>
                   </div>
 
@@ -1076,24 +1072,20 @@ export default function LandingPage() {
                       padding: "14px",
                       borderRadius: "8px",
                       fontSize: "14px",
-                      fontWeight: 700,
+                      fontWeight: 900,
                       lineHeight: "1.6",
                       marginBottom: "16px",
                     }}
                   >
-                    Pay 20% Now & Nothing For 24 Months
-                    <br />
-                    Spot Booking Offers Available
-                    <br />
-                    Get Exclusive Early Buy Discounts
+                    Pay Just <b>10%</b> Now <br />
+                    Enjoy <b>NO EMI</b> Till Possession <br />
+                    10:90 / Flexi Payment Options
                   </div>
 
-                  <div style={{ fontSize: "14px", color: "#555", marginBottom: "8px" }}>
-                    Ultra Luxury <strong>3 & 4 BHK</strong> RESIDENCES Starting At
-                  </div>
+                  <div style={{ fontSize: "14px", color: "#555", marginBottom: "8px" }}>Starting From</div>
 
-                  <div style={{ fontSize: "28px", fontWeight: 800, marginBottom: "16px" }}>
-                    ₹ 4.99 Cr* <span style={{ fontSize: "14px", fontWeight: 500 }}>Onwards</span>
+                  <div style={{ fontSize: "28px", fontWeight: 900, marginBottom: "16px" }}>
+                    ₹ 2.80 Cr* <span style={{ fontSize: "14px", fontWeight: 600 }}>Onwards</span>
                   </div>
 
                   <button
@@ -1106,7 +1098,7 @@ export default function LandingPage() {
                       width: "100%",
                       marginTop: "10px",
                       cursor: "pointer",
-                      fontWeight: 800,
+                      fontWeight: 900,
                       borderRadius: "8px",
                       fontSize: "16px",
                     }}
@@ -1116,12 +1108,10 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Enquiry Form */}
               <EnquiryBlock compact />
             </div>
           )}
 
-          {/* ✅ All sections one-by-one (unchanged from original) */}
           {/* Welcome */}
           <section
             className="section-pad"
@@ -1135,12 +1125,13 @@ export default function LandingPage() {
               style={{
                 color: "#d35400",
                 fontSize: isMobile || isTablet ? "28px" : "38px",
-                fontWeight: 700,
-                marginBottom: "24px",
-                marginTop: (isMobile || isTablet) ? "0" : "0",
+                fontWeight: 800,
+                marginBottom: "16px",
+                marginTop: 0,
+                lineHeight: 1.2,
               }}
             >
-              Welcome To Sanskriti  Residences
+              Introducing Sanskriti – Your Own Villa Floor in Prime Borivali East
             </h2>
 
             <p
@@ -1150,30 +1141,111 @@ export default function LandingPage() {
                 fontSize: isMobile || isTablet ? "16px" : "18px",
                 maxWidth: "1100px",
                 marginTop: 0,
-                marginBottom: "16px",
+                marginBottom: "14px",
               }}
             >
-              Welcome to Sanskriti  Residences Sanskriti Building Plot 210 Daulat Nagar Borivali, Borivali, Mumbai Suburban, 400066, the latest luxury tower from the prestigious Sanskriti
-              Realty, redefining premium residential living in Mumbai's most vibrant western suburb.
+              A landmark development by <b>Jem World Group</b> – a 3rd-generation developer known for quality, timely delivery & exceptional
+              customer service. Experience an <b>exclusive 3 BHK Villa Floor concept</b> with <b>one floor, one apartment</b> in Daulat Nagar,
+              Borivali East.
             </p>
 
             {expanded && (
-              <p
-                style={{
-                  lineHeight: "1.9",
-                  color: "#222",
-                  fontSize: isMobile || isTablet ? "16px" : "18px",
-                  maxWidth: "1100px",
-                  marginBottom: "16px",
-                }}
-              >
-                This newly launched tower, part of the acclaimed Linkbay Residences development, brings the same elegance,
-                space, and high-end lifestyle features with a fresh identity and unmatched potential. Located just off
-                the bustling Sanskriti Building Plot 210 Daulat Nagar Borivali, Borivali, Mumbai Suburban, offers seamless connectivity, modern
-                architecture, and world-class amenities that cater to discerning urban homebuyers. Whether you're a
-                family looking for space and comfort or an investor seeking long-term growth, this landmark project is
-                crafted to meet your needs.
-              </p>
+              <div style={{ maxWidth: "1100px" }}>
+                <p
+                  style={{
+                    lineHeight: "1.9",
+                    color: "#222",
+                    fontSize: isMobile || isTablet ? "16px" : "18px",
+                    marginBottom: "14px",
+                  }}
+                >
+                  Designed for luxury, privacy & positive energy: <b>Vastu-compliant</b> homes with a <b>3-side open layout</b>, <b>3 master bedrooms</b>,
+                  powder washroom, and panoramic views towards the <b>Sanjay Gandhi National Park</b>.
+                </p>
+
+                <div
+                  style={{
+                    background: "#fff7f2",
+                    border: "1px solid #ffd9c7",
+                    borderRadius: 10,
+                    padding: isMobile ? "14px" : "16px 18px",
+                    marginBottom: "14px",
+                  }}
+                >
+                  <div style={{ fontWeight: 900, color: "#a34e35", marginBottom: 10 }}>
+                    Key Highlights
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+                      gap: "10px 18px",
+                      fontSize: isMobile ? 14 : 15,
+                      color: "#222",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {[
+                      "Exclusive 3 BHK layout with Villa Floor concept",
+                      "Niche gentry / premium neighborhood",
+                      "Freehold land (most nearby are redevelopment)",
+                      "Developer’s legacy (3rd generation)",
+                      "Daulat Nagar’s premium project",
+                      "3-side open view",
+                      "All 3 master bedrooms + powder washroom",
+                      "Butterfly layout with efficient planning",
+                      "Quality product & premium finishes",
+                      "Connectivity to Metro Rail & Western Express Highway",
+                      "Jain Derasar & Swaminarayan temple within ~200m",
+                      "Non-cosmo project",
+                      "No loan on project (for construction) / cash-rich developer",
+                      "10:90 scheme & flexi payment options",
+                      "70% work completed • Possession Dec 2026",
+                    ].map((t) => (
+                      <div key={t} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                        <span style={{ color: "#d35400", fontWeight: 900 }}>✓</span>
+                        <span>{t}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    flexWrap: "wrap",
+                    marginTop: 6,
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "10px 12px",
+                      borderRadius: 999,
+                      background: "rgba(211,84,0,0.10)",
+                      border: "1px solid rgba(211,84,0,0.22)",
+                      fontWeight: 900,
+                      color: "#a34e35",
+                      fontSize: 13,
+                    }}
+                  >
+                    Starting from ₹2.8 Cr Onwards*
+                  </div>
+                  <div
+                    style={{
+                      padding: "10px 12px",
+                      borderRadius: 999,
+                      background: "rgba(0,150,0,0.08)",
+                      border: "1px solid rgba(0,150,0,0.18)",
+                      fontWeight: 900,
+                      color: "#0a7a0a",
+                      fontSize: 13,
+                    }}
+                  >
+                    Pay 10% Now • NO EMI till Possession
+                  </div>
+                </div>
+              </div>
             )}
 
             <span
@@ -1181,11 +1253,12 @@ export default function LandingPage() {
               style={{
                 cursor: "pointer",
                 color: "#000",
-                fontWeight: 600,
+                fontWeight: 700,
                 textDecoration: "underline",
                 fontSize: isMobile || isTablet ? "14px" : "16px",
                 display: "inline-block",
-                marginBottom: "20px",
+                marginBottom: "18px",
+                marginTop: 6,
               }}
             >
               {expanded ? "Read less" : "Read more"}
@@ -1201,10 +1274,10 @@ export default function LandingPage() {
                 border: "none",
                 padding: isMobile || isTablet ? "12px 24px" : "14px 34px",
                 borderRadius: "6px",
-                marginTop: "12px",
+                marginTop: "10px",
                 cursor: "pointer",
                 fontSize: isMobile || isTablet ? "14px" : "16px",
-                fontWeight: 600,
+                fontWeight: 800,
               }}
             >
               Download Brochure
@@ -1226,158 +1299,121 @@ export default function LandingPage() {
                 color: "#d35400",
                 fontSize: isMobile || isTablet ? "24px" : "28px",
                 marginTop: 0,
-                marginBottom: isMobile || isTablet ? "20px" : "30px",
-                fontWeight: 700,
+                marginBottom: isMobile || isTablet ? "16px" : "24px",
+                fontWeight: 800,
               }}
             >
-              Sanskriti Linkbay Residences Pricing And Carpet Area
+              Sanskriti Pricing & Carpet Area
             </h2>
 
-            <div style={{ 
-              display: "flex", 
-              gap: isMobile || isTablet ? "20px" : "30px", 
-              flexDirection: isMobile || isTablet ? "column" : "row",
-              alignItems: "flex-start" 
-            }}>
-              {/* TABLE */}
-              <div style={{ 
-                flex: isMobile || isTablet ? "none" : 2, 
-                width: "100%",
-                overflowX: isMobile || isTablet ? "auto" : "visible" 
-              }}>
-                <div style={{ minWidth: isMobile ? "600px" : "auto" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: isMobile || isTablet ? "20px" : "30px",
+                flexDirection: isMobile || isTablet ? "column" : "row",
+                alignItems: "flex-start",
+              }}
+            >
+              {/* TABLE (Desktop/Tablet) + Cards (Mobile) */}
+              <div style={{ flex: isMobile || isTablet ? "none" : 2, width: "100%" }}>
+                {/* ✅ MOBILE NO HORIZONTAL SCROLL: show cards instead of wide table */}
+                {isMobile ? (
+                  <div style={{ display: "grid", gap: 12 }}>
+                    {pricingRows.map((r) => (
+                      <div
+                        key={r.area}
+                        style={{
+                          border: "1px solid #e6e6e6",
+                          borderRadius: 12,
+                          padding: 14,
+                          background: "#fff",
+                          boxShadow: "0 8px 18px rgba(0,0,0,0.08)",
+                        }}
+                      >
+                        <div style={{ fontWeight: 900, color: "#111", fontSize: 15, marginBottom: 6 }}>{r.type}</div>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 6 }}>
+                          <span style={{ color: "#555" }}>Carpet</span>
+                          <b>{r.area}</b>
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 12 }}>
+                          <span style={{ color: "#555" }}>Price</span>
+                          <b style={{ color: "#a34e35" }}>{r.price}</b>
+                        </div>
+                        <button
+                          onClick={() => openLead("generic")}
+                          style={{
+                            width: "100%",
+                            backgroundColor: "#c85c11",
+                            color: "#fff",
+                            border: "none",
+                            padding: "10px 12px",
+                            borderRadius: "10px",
+                            cursor: "pointer",
+                            fontWeight: 800,
+                            fontSize: 14,
+                          }}
+                        >
+                          Price Breakup
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
                   <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd" }}>
                     <thead>
                       <tr>
-                        <th style={{ 
-                          padding: isMobile ? "10px" : "14px", 
-                          textAlign: "left", 
-                          fontWeight: 700 
-                        }}>
-                          Type
-                        </th>
-                        <th style={{ 
-                          padding: isMobile ? "10px" : "14px", 
-                          textAlign: "left", 
-                          fontWeight: 700 
-                        }}>
-                          Carpet Area
-                        </th>
-                        <th style={{ 
-                          padding: isMobile ? "10px" : "14px", 
-                          textAlign: "left", 
-                          fontWeight: 700 
-                        }}>
-                          Price
-                        </th>
-                        <th style={{ 
-                          padding: isMobile ? "10px" : "14px", 
-                          textAlign: "left", 
-                          fontWeight: 700 
-                        }}>
-                          Action
-                        </th>
+                        <th style={{ padding: "14px", textAlign: "left", fontWeight: 800 }}>Type</th>
+                        <th style={{ padding: "14px", textAlign: "left", fontWeight: 800 }}>Carpet Area</th>
+                        <th style={{ padding: "14px", textAlign: "left", fontWeight: 800 }}>Price</th>
+                        <th style={{ padding: "14px", textAlign: "left", fontWeight: 800 }}>Action</th>
                       </tr>
                     </thead>
-
                     <tbody>
-                      <tr style={{ backgroundColor: "#f3f3f3" }}>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>3 BHK</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>1153 SqFt</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>₹ 2.80 Cr Onwards*</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>
-                          <button
-                            onClick={() => openLead("generic")}
-                            style={{
-                              backgroundColor: "#c85c11",
-                              color: "#fff",
-                              border: "none",
-                              padding: isMobile ? "6px 10px" : "8px 14px",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                              fontWeight: 600,
-                              fontSize: isMobile ? "12px" : "14px",
-                            }}
-                          >
-                            Price Breakup
-                          </button>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>3 BHK</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>1522 SqFt</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>₹ 2.80 Cr Onwards*</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>
-                          <button
-                            onClick={() => openLead("generic")}
-                            style={{
-                              backgroundColor: "#c85c11",
-                              color: "#fff",
-                              border: "none",
-                              padding: isMobile ? "6px 10px" : "8px 14px",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                              fontWeight: 600,
-                              fontSize: isMobile ? "12px" : "14px",
-                            }}
-                          >
-                            Price Breakup
-                          </button>
-                        </td>
-                      </tr>
-
-                      <tr style={{ backgroundColor: "#f3f3f3" }}>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>4 BHK</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>1460 SqFt</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>₹ 6.10 Cr Onwards*</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>
-                          <button
-                            onClick={() => openLead("generic")}
-                            style={{
-                              backgroundColor: "#c85c11",
-                              color: "#fff",
-                              border: "none",
-                              padding: isMobile ? "6px 10px" : "8px 14px",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                              fontWeight: 600,
-                              fontSize: isMobile ? "12px" : "14px",
-                            }}
-                          >
-                            Price Breakup
-                          </button>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>4 BHK</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>1887 SqFt</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>₹ 7.99 Cr Onwards*</td>
-                        <td style={{ padding: isMobile ? "10px" : "14px" }}>
-                          <button
-                            onClick={() => openLead("generic")}
-                            style={{
-                              backgroundColor: "#c85c11",
-                              color: "#fff",
-                              border: "none",
-                              padding: isMobile ? "6px 10px" : "8px 14px",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                              fontWeight: 600,
-                              fontSize: isMobile ? "12px" : "14px",
-                            }}
-                          >
-                            Price Breakup
-                          </button>
-                        </td>
-                      </tr>
+                      {pricingRows.map((r, idx) => (
+                        <tr key={r.area} style={{ backgroundColor: idx % 2 === 0 ? "#f3f3f3" : "#fff" }}>
+                          <td style={{ padding: "14px" }}>{r.type}</td>
+                          <td style={{ padding: "14px" }}>{r.area}</td>
+                          <td style={{ padding: "14px" }}>{r.price}</td>
+                          <td style={{ padding: "14px" }}>
+                            <button
+                              onClick={() => openLead("generic")}
+                              style={{
+                                backgroundColor: "#c85c11",
+                                color: "#fff",
+                                border: "none",
+                                padding: "8px 14px",
+                                borderRadius: "6px",
+                                cursor: "pointer",
+                                fontWeight: 800,
+                                fontSize: 14,
+                              }}
+                            >
+                              Price Breakup
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
+                )}
+
+                <div
+                  style={{
+                    marginTop: 14,
+                    background: "#fff7f2",
+                    border: "1px solid #ffd9c7",
+                    borderRadius: 10,
+                    padding: 12,
+                    color: "#333",
+                    fontSize: 13.5,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  <b>Offer:</b> Pay Just <b>10%</b> Now & Enjoy <b>NO EMI</b> Till Possession • <b>10:90</b> / Flexi payment options available.
                 </div>
               </div>
 
-              {/* COSTING */}
+              {/* COSTING BOX */}
               <div
                 style={{
                   flex: isMobile || isTablet ? "none" : 1,
@@ -1393,207 +1429,200 @@ export default function LandingPage() {
               >
                 <img
                   src="/g1.jpeg"
-                  alt="Costing Details"
-                  style={{ 
-                    width: "100%", 
-                    border: "1px solid #ccc", 
-                    marginBottom: isMobile || isTablet ? "12px" : "16px" 
+                  alt="Sanskriti"
+                  style={{
+                    width: "100%",
+                    border: "1px solid #ccc",
+                    marginBottom: isMobile || isTablet ? "12px" : "16px",
+                    borderRadius: 10,
                   }}
                 />
 
                 <button
-                  onClick={() => openLead("costing")}
+                  onClick={() => openLead("brochure")}
                   style={{
                     width: "100%",
                     background: "linear-gradient(90deg, #8e3c2d, #c85c11)",
                     color: "#fff",
                     border: "none",
                     padding: isMobile || isTablet ? "12px" : "14px",
-                    borderRadius: "6px",
+                    borderRadius: "10px",
                     fontSize: isMobile || isTablet ? "14px" : "16px",
-                    fontWeight: 600,
+                    fontWeight: 900,
                     cursor: "pointer",
                   }}
                 >
-                  Download Costing Details
+                  Download Brochure
                 </button>
+
+                <div style={{ marginTop: 10, fontSize: 12.5, color: "#555", lineHeight: 1.5 }}>
+                  For detailed costing / payment plan, submit your details and we will share it on call / WhatsApp.
+                </div>
               </div>
             </div>
           </section>
 
-          {/* Master Plan */}
-          {/* Master Plan */}
-<section
-  id="site-plan"
-  className="section-pad"
-  style={{
-    padding: isMobile || isTablet ? "30px 20px" : "60px 50px",
-    backgroundColor: "#fff",
-  }}
->
-  <h2
-    style={{
-      color: "#d35400",
-      fontSize: isMobile || isTablet ? "24px" : "28px",
-      textAlign: "left",
-      marginBottom: isMobile || isTablet ? "20px" : "30px",
-      marginTop: 0,
-      fontWeight: 700,
-    }}
-  >
-    Sanskriti Residences Master Plan
-  </h2>
-
-  {/* Image Frame */}
-  <div
-    style={{
-      border: "1px solid #ddd",
-      borderRadius: "12px",
-      padding: isMobile || isTablet ? "10px" : "14px",
-      boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-      backgroundColor: "#fafafa",
-      overflow: "hidden",
-      maxWidth: "100%",
-      margin: "0 auto",
-    }}
-  >
-    {/* Auto Scrolling Container */}
-    <div
-      style={{
-        display: "flex",
-        gap: "16px",
-        animation: "masterScroll 25s linear infinite",
-        width: "max-content",
-      }}
-    >
-      {[
-        "/plan1.png",
-        "/plan2.png",
-        "/plan3.png",
-        "/plan4.png",
-        "/plan5.png", // duplicate for smooth loop
-        "/plan6.png",
-      ].map((src, index) => (
-        <div
-          key={index}
-          style={{
-            minWidth: isMobile || isTablet ? "80vw" : "420px",
-            height: "260px",
-            borderRadius: "10px",
-            overflow: "hidden",
-            backgroundColor: "#fff",
-            boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
-            flexShrink: 0,
-          }}
-        >
-          <img
-            src={src}
-            alt={`Master Plan ${index + 1}`}
+          {/* Master Plan (kept same section) */}
+          <section
+            id="site-plan"
+            className="section-pad"
             style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-              display: "block",
+              padding: isMobile || isTablet ? "30px 20px" : "60px 50px",
+              backgroundColor: "#fff",
             }}
-          />
-        </div>
-      ))}
-    </div>
-  </div>
-
-  {/* Download Button */}
-  <div style={{ textAlign: "center", marginTop: "30px" }}>
-    <button
-      onClick={() => openLead("masterplan")}
-      style={{
-        background: "linear-gradient(90deg, #8e3c2d, #c85c11)",
-        color: "#fff",
-        border: "none",
-        padding: isMobile || isTablet ? "12px 28px" : "14px 36px",
-        borderRadius: "6px",
-        fontWeight: 600,
-        fontSize: isMobile || isTablet ? "14px" : "15px",
-        cursor: "pointer",
-      }}
-    >
-      Download Masterplan
-    </button>
-  </div>
-
-  {/* Auto Scroll Animation */}
-  <style>
-    {`
-      @keyframes masterScroll {
-        0% {
-          transform: translateX(0);
-        }
-        100% {
-          transform: translateX(-50%);
-        }
-      }
-    `}
-  </style>
-</section>
-
-          {/* Floor Plan */}
-          <section className="section-pad" style={{ 
-            padding: isMobile || isTablet ? "30px 20px" : "60px 50px", 
-            backgroundColor: "#f9f9f9" 
-          }}>
-            <h2 style={{ 
-              color: "#d35400", 
-              fontSize: isMobile || isTablet ? "22px" : "26px", 
-              marginBottom: "20px", 
-              marginTop: 0 
-            }}>
-              Sanskriti Linkway Floor Plan
+          >
+            <h2
+              style={{
+                color: "#d35400",
+                fontSize: isMobile || isTablet ? "24px" : "28px",
+                textAlign: "left",
+                marginBottom: isMobile || isTablet ? "20px" : "30px",
+                marginTop: 0,
+                fontWeight: 800,
+              }}
+            >
+              Sanskriti Master Plan & Floor Plans
             </h2>
+
+            <div
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: "12px",
+                padding: isMobile || isTablet ? "10px" : "14px",
+                boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                backgroundColor: "#fafafa",
+                overflow: "hidden",
+                maxWidth: "100%",
+                margin: "0 auto",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  gap: "16px",
+                  animation: "masterScroll 25s linear infinite",
+                  width: "max-content",
+                }}
+              >
+                {["/plan1.png", "/plan2.png", "/plan3.png", "/plan4.png", "/plan5.png", "/plan6.png"].map((src, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      minWidth: isMobile || isTablet ? "80vw" : "420px",
+                      height: "260px",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                      backgroundColor: "#fff",
+                      boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <img
+                      src={src}
+                      alt={`Master Plan ${index + 1}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                        display: "block",
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: "26px", display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+              <button
+                onClick={() => openLead("masterplan")}
+                style={{
+                  background: "linear-gradient(90deg, #8e3c2d, #c85c11)",
+                  color: "#fff",
+                  border: "none",
+                  padding: isMobile || isTablet ? "12px 22px" : "14px 30px",
+                  borderRadius: "10px",
+                  fontWeight: 900,
+                  fontSize: isMobile || isTablet ? "14px" : "15px",
+                  cursor: "pointer",
+                }}
+              >
+                Request Masterplan
+              </button>
+
+              <button
+                onClick={() => openLead("brochure")}
+                style={{
+                  background: "linear-gradient(90deg, #a34e35, #d4631c)",
+                  color: "#fff",
+                  border: "none",
+                  padding: isMobile || isTablet ? "12px 22px" : "14px 30px",
+                  borderRadius: "10px",
+                  fontWeight: 900,
+                  fontSize: isMobile || isTablet ? "14px" : "15px",
+                  cursor: "pointer",
+                }}
+              >
+                View Floor Plans in Brochure
+              </button>
+            </div>
+
+            <style>
+              {`
+                @keyframes masterScroll {
+                  0% { transform: translateX(0); }
+                  100% { transform: translateX(-50%); }
+                }
+              `}
+            </style>
+          </section>
+
+          {/* Floor Plan (kept section) */}
+          <section
+            className="section-pad"
+            style={{
+              padding: isMobile || isTablet ? "30px 20px" : "60px 50px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            <h2 style={{ color: "#d35400", fontSize: isMobile || isTablet ? "22px" : "26px", marginBottom: "16px", marginTop: 0, fontWeight: 900 }}>
+              Sanskriti Floor Plans (3 BHK Villa Floors)
+            </h2>
+            <div style={{ color: "#333", fontSize: isMobile ? 14 : 15.5, lineHeight: 1.7, marginBottom: 14, maxWidth: 950 }}>
+              Floor plans are available in the brochure. Submit your details to receive the brochure instantly.
+            </div>
             <button
-              onClick={() => openLead("generic")}
+              onClick={() => openLead("brochure")}
               style={{
                 backgroundColor: "#a34e35",
                 color: "#fff",
                 border: "none",
                 padding: isMobile || isTablet ? "10px 20px" : "12px 25px",
-                borderRadius: "4px",
-                fontWeight: "bold",
+                borderRadius: "10px",
+                fontWeight: 900,
                 cursor: "pointer",
                 fontSize: isMobile || isTablet ? "14px" : "16px",
               }}
             >
-              On Request
+              Download Brochure
             </button>
           </section>
 
-          {/* Amenities */}
-          <section id="amenities" style={{ 
-            padding: isMobile || isTablet ? "30px 20px" : "60px 50px", 
-            backgroundColor: "#fff" 
-          }}>
-            <div style={{ 
-              display: "flex", 
-              justifyContent: "space-between", 
-              marginBottom: 20, 
-              flexWrap: "wrap", 
-              gap: 12,
-              alignItems: "center"
-            }}>
-              <h2 style={{ 
-                color: "#d35400", 
-                fontSize: isMobile || isTablet ? "22px" : "26px", 
-                margin: 0 
-              }}>
-                Amenities Of Sanskriti Linkbay Residences
+          {/* Amenities (unchanged section, content kept) */}
+          <section id="amenities" style={{ padding: isMobile || isTablet ? "30px 20px" : "60px 50px", backgroundColor: "#fff" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+              <h2 style={{ color: "#d35400", fontSize: isMobile || isTablet ? "22px" : "26px", margin: 0, fontWeight: 900 }}>
+                Amenities Of Sanskriti
               </h2>
               <button
                 onClick={() => openLead("generic")}
-                style={{ 
-                  background: "#a34e35", 
-                  color: "#fff", 
-                  border: 0, 
-                  padding: isMobile || isTablet ? "8px 16px" : "10px 20px", 
-                  borderRadius: 6,
-                  fontSize: isMobile || isTablet ? "14px" : "16px"
+                style={{
+                  background: "#a34e35",
+                  color: "#fff",
+                  border: 0,
+                  padding: isMobile || isTablet ? "8px 16px" : "10px 20px",
+                  borderRadius: 10,
+                  fontSize: isMobile || isTablet ? "14px" : "16px",
+                  fontWeight: 900,
                 }}
               >
                 Amenities
@@ -1601,13 +1630,15 @@ export default function LandingPage() {
             </div>
 
             <div style={{ overflow: "hidden", width: "100%" }}>
-              <div style={{ 
-                display: "flex", 
-                gap: isMobile || isTablet ? "16px" : "24px", 
-                animation: "scrollX 30s linear infinite", 
-                width: "max-content",
-                padding: isMobile || isTablet ? "10px 0" : "20px 0"
-              }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: isMobile || isTablet ? "16px" : "24px",
+                  animation: "scrollX 30s linear infinite",
+                  width: "max-content",
+                  padding: isMobile || isTablet ? "10px 0" : "20px 0",
+                }}
+              >
                 {[...amenitiesData, ...amenitiesData].map((item, i) => (
                   <div
                     key={i}
@@ -1633,7 +1664,7 @@ export default function LandingPage() {
                         color: "#fff",
                         padding: "6px 12px",
                         fontSize: isMobile ? "11px" : "12px",
-                        fontWeight: 700,
+                        fontWeight: 900,
                         borderLeft: "4px solid #d35400",
                       }}
                     >
@@ -1645,35 +1676,22 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* Gallery */}
-          <section id="gallery" style={{ 
-            padding: isMobile || isTablet ? "30px 20px" : "60px 50px", 
-            backgroundColor: "#fdfdfd" 
-          }}>
-            <div style={{ 
-              display: "flex", 
-              justifyContent: "space-between", 
-              marginBottom: 20, 
-              flexWrap: "wrap", 
-              gap: 12,
-              alignItems: "center"
-            }}>
-              <h2 style={{ 
-                color: "#d35400", 
-                fontSize: isMobile || isTablet ? "22px" : "26px", 
-                margin: 0 
-              }}>
-                Gallery Of Sanskriti Linkbay Residences
+          {/* Gallery (kept) */}
+          <section id="gallery" style={{ padding: isMobile || isTablet ? "30px 20px" : "60px 50px", backgroundColor: "#fdfdfd" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+              <h2 style={{ color: "#d35400", fontSize: isMobile || isTablet ? "22px" : "26px", margin: 0, fontWeight: 900 }}>
+                Gallery Of Sanskriti
               </h2>
               <button
                 onClick={() => openLead("generic")}
-                style={{ 
-                  background: "#a34e35", 
-                  color: "#fff", 
-                  border: 0, 
-                  padding: isMobile || isTablet ? "8px 16px" : "10px 20px", 
-                  borderRadius: 6,
-                  fontSize: isMobile || isTablet ? "14px" : "16px"
+                style={{
+                  background: "#a34e35",
+                  color: "#fff",
+                  border: 0,
+                  padding: isMobile || isTablet ? "8px 16px" : "10px 20px",
+                  borderRadius: 10,
+                  fontSize: isMobile || isTablet ? "14px" : "16px",
+                  fontWeight: 900,
                 }}
               >
                 Gallery
@@ -1681,13 +1699,15 @@ export default function LandingPage() {
             </div>
 
             <div style={{ overflow: "hidden", width: "100%" }}>
-              <div style={{ 
-                display: "flex", 
-                gap: isMobile || isTablet ? "16px" : "24px", 
-                animation: "scrollX 25s linear infinite", 
-                width: "max-content",
-                padding: isMobile || isTablet ? "10px 0" : "20px 0"
-              }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: isMobile || isTablet ? "16px" : "24px",
+                  animation: "scrollX 25s linear infinite",
+                  width: "max-content",
+                  padding: isMobile || isTablet ? "10px 0" : "20px 0",
+                }}
+              >
                 {[...galleryData, ...galleryData].map((img, i) => (
                   <img
                     key={i}
@@ -1709,7 +1729,7 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* Location */}
+          {/* Location (UPDATED CONNECTIVITY AS PER YOUR CONTENT) */}
           <section
             id="location"
             className="section-pad"
@@ -1730,13 +1750,8 @@ export default function LandingPage() {
                 flexWrap: "wrap",
               }}
             >
-              <h2 style={{ 
-                color: "#e45b0f", 
-                fontSize: isMobile || isTablet ? "22px" : "28px", 
-                margin: 0, 
-                fontWeight: 700 
-              }}>
-                Sanskriti Linkbay Residences Location Map And Connectivity
+              <h2 style={{ color: "#e45b0f", fontSize: isMobile || isTablet ? "22px" : "28px", margin: 0, fontWeight: 900 }}>
+                Location Map & Prime Connectivity
               </h2>
 
               <button
@@ -1746,9 +1761,9 @@ export default function LandingPage() {
                   color: "#fff",
                   border: "none",
                   padding: isMobile || isTablet ? "10px 20px" : "12px 28px",
-                  borderRadius: "6px",
+                  borderRadius: "10px",
                   fontSize: isMobile || isTablet ? "14px" : "14px",
-                  fontWeight: 600,
+                  fontWeight: 900,
                   cursor: "pointer",
                 }}
               >
@@ -1756,34 +1771,36 @@ export default function LandingPage() {
               </button>
             </div>
 
-            <div style={{ 
-              display: "flex", 
-              gap: isMobile || isTablet ? "20px" : "50px", 
-              flexDirection: isMobile || isTablet ? "column" : "row",
-              alignItems: "flex-start" 
-            }}>
+            <div
+              style={{
+                display: "flex",
+                gap: isMobile || isTablet ? "20px" : "50px",
+                flexDirection: isMobile || isTablet ? "column" : "row",
+                alignItems: "flex-start",
+              }}
+            >
               <div
                 style={{
                   width: isMobile || isTablet ? "100%" : "46%",
                   minWidth: isMobile || isTablet ? "auto" : "320px",
                   border: "1px solid #ddd",
-                  borderRadius: "6px",
+                  borderRadius: "12px",
                   padding: isMobile || isTablet ? "8px" : "10px",
                   backgroundColor: "#fafafa",
                 }}
               >
-                <img src="/location.png" alt="Location Map" style={{ width: "100%", height: "auto", display: "block" }} />
+                <img src="/location.png" alt="Location Map" style={{ width: "100%", height: "auto", display: "block", borderRadius: 10 }} />
               </div>
 
-              <div style={{ 
-                flex: 1, 
-                width: isMobile || isTablet ? "100%" : "auto",
-                minWidth: isMobile || isTablet ? "auto" : "300px" 
-              }}>
+              <div style={{ flex: 1, width: isMobile || isTablet ? "100%" : "auto" }}>
                 {[
-                  ["Borivali East Metro Station", "5 mins"],
-                  ["Borivali Railway Station", "10 mins"],
-                 
+                  ["Borivali Railway Station", "Nearby"],
+                  ["Borivali East Metro Station", "Nearby"],
+                  ["Western Express Highway", "Quick access"],
+                  ["Jain Derasar", "5 mins walk"],
+                  ["Swaminarayan Temple", "200 m"],
+                   ["Oberoi Sky City Mall", "5 min Walk"],
+
                 ].map(([t, v], idx) => (
                   <div
                     key={idx}
@@ -1792,7 +1809,7 @@ export default function LandingPage() {
                       justifyContent: "space-between",
                       alignItems: "center",
                       padding: isMobile || isTablet ? "12px 0" : "14px 0",
-                      borderBottom: idx < 2 ? "1px solid #ddd" : "none",
+                      borderBottom: idx < 4 ? "1px solid #ddd" : "none",
                       fontSize: isMobile || isTablet ? "14px" : "16px",
                     }}
                   >
@@ -1803,11 +1820,26 @@ export default function LandingPage() {
                     <strong>{v}</strong>
                   </div>
                 ))}
+
+                <div
+                  style={{
+                    marginTop: 16,
+                    padding: 12,
+                    borderRadius: 12,
+                    background: "#fff7f2",
+                    border: "1px solid #ffd9c7",
+                    color: "#222",
+                    lineHeight: 1.6,
+                    fontSize: isMobile ? 13.5 : 14.5,
+                  }}
+                >
+                  <b>Site Address:</b> Sanskriti Building Plot 210, Daulat Nagar Road No. 10, Borivali East, Mumbai 400066
+                </div>
               </div>
             </div>
           </section>
 
-          {/* Virtual */}
+          {/* Virtual (kept) */}
           <section
             id="virtual-visit"
             style={{
@@ -1818,13 +1850,8 @@ export default function LandingPage() {
             }}
           >
             <div style={{ marginBottom: isMobile || isTablet ? "20px" : "24px" }}>
-              <h2 style={{ 
-                color: "#e45b0f", 
-                fontSize: isMobile || isTablet ? "22px" : "28px", 
-                margin: 0, 
-                fontWeight: 700 
-              }}>
-                Virtual Tour Request
+              <h2 style={{ color: "#e45b0f", fontSize: isMobile || isTablet ? "22px" : "28px", margin: 0, fontWeight: 900 }}>
+                Virtual Site Visitedededed
               </h2>
             </div>
 
@@ -1835,18 +1862,14 @@ export default function LandingPage() {
                 maxWidth: "1000px",
                 height: isMobile || isTablet ? "250px" : "420px",
                 margin: "0 auto",
-                borderRadius: "8px",
+                borderRadius: "12px",
                 overflow: "hidden",
                 boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
                 cursor: "pointer",
               }}
-              onClick={() => setShowVideo(true)}
+               onClick={() => openLead("generic")}
             >
-              <img
-                src="/g7.jpeg"
-                alt="Virtual Site Visit"
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-              />
+              <img src="/g7.jpeg" alt="Virtual Site Visit" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
 
               <div
                 style={{
@@ -1886,15 +1909,10 @@ export default function LandingPage() {
                   />
                 </div>
 
-                <h3 style={{ 
-                  fontSize: isMobile || isTablet ? "20px" : "32px", 
-                  margin: "0 0 6px 0", 
-                  fontWeight: 800,
-                  lineHeight: "1.2"
-                }}>
+                <h3 style={{ fontSize: isMobile || isTablet ? "20px" : "32px", margin: "0 0 6px 0", fontWeight: 900, lineHeight: "1.2" }}>
                   VIRTUAL SITE VISIT
                 </h3>
-                <p style={{ fontSize: isMobile || isTablet ? "14px" : "18px", margin: 0 }}>Sanskriti Linkway</p>
+                <p style={{ fontSize: isMobile || isTablet ? "14px" : "18px", margin: 0 }}>{PROJECT_NAME}</p>
               </div>
             </div>
 
@@ -1918,7 +1936,7 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     maxWidth: "900px",
-                    borderRadius: "8px",
+                    borderRadius: "12px",
                     boxShadow: "0 20px 50px rgba(0,0,0,0.6)",
                   }}
                   onClick={(e) => e.stopPropagation()}
@@ -1930,7 +1948,7 @@ export default function LandingPage() {
             )}
           </section>
 
-          {/* About + Footer */}
+          {/* About + Footer (UPDATED CONTENT, section kept) */}
           <section
             style={{
               padding: isMobile || isTablet ? "40px 20px" : "70px 50px",
@@ -1949,139 +1967,90 @@ export default function LandingPage() {
                 flexWrap: "wrap",
               }}
             >
-              <h2 style={{ 
-                color: "#1f2937", 
-                fontSize: isMobile || isTablet ? "22px" : "28px", 
-                margin: 0, 
-                fontWeight: 700 
-              }}>
-                About Sanskriti Group
+              <h2 style={{ color: "#1f2937", fontSize: isMobile || isTablet ? "22px" : "28px", margin: 0, fontWeight: 900 }}>
+                About Jem World Group
               </h2>
 
               <button
-                onClick={() => openLead("generic")}
-                style={{
-                  background: "linear-gradient(90deg, #d35400, #e67e22)",
-                  color: "#fff",
-                  border: "none",
-                  padding: isMobile || isTablet ? "10px 20px" : "12px 28px",
-                  borderRadius: "6px",
-                  fontSize: isMobile || isTablet ? "14px" : "14px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-              >
-                Chat with us
-              </button>
+              onClick={() => {
+                const phoneNumber = "+919004183975"; // apna WhatsApp number (country code ke sath)
+                const message = "Hi , I am  interested in Sanskriti by Jem World Group, Borivali East. Please share price, availability & site visit details.Thanks."
+                const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.open(url, "_blank");
+              }}
+              style={{
+                background: "linear-gradient(90deg, #d35400, #e67e22)",
+                color: "#fff",
+                border: "none",
+                padding: isMobile || isTablet ? "10px 20px" : "12px 28px",
+                borderRadius: "10px",
+                fontSize: "14px",
+                fontWeight: 900,
+                cursor: "pointer",
+              }}
+            >
+              Chat with us
+            </button>
+
             </div>
 
-            <div style={{ 
-              color: "#374151", 
-              lineHeight: "1.9", 
-              fontSize: isMobile || isTablet ? "14px" : "15.5px", 
-              maxWidth: "1100px" 
-            }}>
-              <p style={{ marginBottom: "24px", textAlign: "justify" }}>
-                Welcome to Sanskriti  Residences Sanskriti Building Plot 210,Daulat Nagar Road No .10 ,Borivali East ,Mumbai 400066, the latest luxury tower from the prestigious Sanskriti
-                Realty, redefining premium residential living in Mumbai's most vibrant Borivali . This newly launched
-                tower, part of the acclaimed Linkway Residences development, brings the same elegance, space, and high-end
-                lifestyle features with a fresh identity and unmatched potential. Located just off the Sanskriti Building Plot 210,Daulat Nagar Road No .10 ,Borivali East offers seamless connectivity, modern architecture, and world-class
-                amenities that cater to discerning urban homebuyers. Whether you're a family looking for space and comfort or
-                an investor seeking long-term growth, this landmark project is crafted to meet your needs.
+            <div style={{ color: "#374151", lineHeight: "1.9", fontSize: isMobile || isTablet ? "14px" : "15.5px", maxWidth: "1100px" }}>
+              <p style={{ marginBottom: "18px", textAlign: "justify" }}>
+                {PROJECT_NAME} is a landmark development by Jem World Group, focused on creating a quality product with thoughtful planning, privacy
+                and premium living. The project features an exclusive Villa Floor concept, Vastu-compliant homes, 3-side open layouts and
+                excellent connectivity in Borivali East.
               </p>
 
               <div
                 style={{
-                  marginBottom: "24px",
+                  marginBottom: "18px",
                   padding: isMobile || isTablet ? "14px" : "18px 20px",
                   backgroundColor: "#fafafa",
                   border: "1px solid #eee",
-                  borderRadius: "6px",
+                  borderRadius: "12px",
                 }}
               >
-                <p style={{ margin: "6px 0", fontWeight: 600 }}>Sanskriti  Residences</p>
+                <p style={{ margin: "6px 0", fontWeight: 900 }}>{PROJECT_NAME}</p>
                 <p style={{ margin: "6px 0" }}>
                   MahaRERA – <strong>P51800011430</strong>
                 </p>
                 <p style={{ margin: "6px 0" }}>
-                  Marketing Partner RERA – <strong>A.......</strong>
+                  Possession – <strong>December 2026</strong>
                 </p>
               </div>
 
-              <p style={{ 
-                fontSize: isMobile || isTablet ? "12px" : "13.5px", 
-                color: "#6b7280", 
-                marginBottom: "40px" 
-              }}>
-                The promoter shall execute and register a conveyance deed in favour of the allottee or the association of the
-allottees, as the case may be, of the apartment or the common areas as per Rule 9 (2) of Maharashtra Real
-Estate (Regulation and Development) (Registration of Real Estate Projects, Registration of Real Estate Agents,
-Rates of Interest and Disclosures on Website) Rules,2017
+              <p style={{ fontSize: isMobile || isTablet ? "12px" : "13.5px", color: "#6b7280", marginBottom: "40px" }}>
+                The promoter shall execute and register a conveyance deed in favour of the allottee / association of allottees as per applicable rules.
               </p>
             </div>
 
             <hr style={{ border: "0", borderTop: "1px solid #eee", margin: isMobile || isTablet ? "30px 0" : "40px 0" }} />
 
-            <footer style={{ 
-              padding: isMobile || isTablet ? "20px 0" : "30px 0", 
-              fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" 
-            }}>
-              <div style={{ 
-                fontSize: isMobile || isTablet ? "13px" : "14px", 
-                lineHeight: "1.9", 
-                color: "#111827", 
-                marginBottom: isMobile || isTablet ? "20px" : "30px", 
-                maxWidth: "1100px" 
-              }}>
-                <div style={{ 
-                  display: "flex", 
-                  flexDirection: isMobile || isTablet ? "column" : "row", 
-                  gap: isMobile || isTablet ? "8px" : "10px", 
-                  marginBottom: "12px" 
-                }}>
-                  <span style={{ fontWeight: 700, minWidth: isMobile || isTablet ? "auto" : "120px" }}>✓ Site Address:</span>
-                  <span>
-                    Sanskriti Building Plot 210 , Daulat Nagar Borivali East , Mumbai 400066
-                  </span>
+            <footer style={{ padding: isMobile || isTablet ? "20px 0" : "30px 0", fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" }}>
+              <div style={{ fontSize: isMobile || isTablet ? "13px" : "14px", lineHeight: "1.9", color: "#111827", marginBottom: isMobile || isTablet ? "20px" : "30px", maxWidth: "1100px" }}>
+                <div style={{ display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", gap: isMobile || isTablet ? "8px" : "10px", marginBottom: "12px" }}>
+                  <span style={{ fontWeight: 900, minWidth: isMobile || isTablet ? "auto" : "120px" }}>✓ Site Address:</span>
+                  <span>Sanskriti Building Plot 210, Daulat Nagar Road No. 10, Borivali East, Mumbai 400066</span>
                 </div>
 
-                <div style={{ 
-                  display: "flex", 
-                  flexDirection: isMobile || isTablet ? "column" : "row", 
-                  gap: isMobile || isTablet ? "8px" : "10px" 
-                }}>
-                  <span style={{ fontWeight: 700, minWidth: isMobile || isTablet ? "auto" : "120px" }}>✓ Contact Us:</span>
-                  <span>
-                    Sanskriti Building Plot 210, Daulat Nagar Road No 10. , Borivali East, Mumbai, Maharashtra 400066
-                  </span>
+                <div style={{ display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", gap: isMobile || isTablet ? "8px" : "10px" }}>
+                  <span style={{ fontWeight: 900, minWidth: isMobile || isTablet ? "auto" : "120px" }}>✓ Contact Us:</span>
+                  <span>{PHONE}</span>
                 </div>
               </div>
 
-              <div style={{ 
-                fontSize: isMobile || isTablet ? "12px" : "13px", 
-                color: "#374151", 
-                lineHeight: "1.7", 
-                textAlign: "justify", 
-                maxWidth: "1100px", 
-                marginBottom: isMobile || isTablet ? "25px" : "35px" 
-              }}>
+              <div style={{ fontSize: isMobile || isTablet ? "12px" : "13px", color: "#374151", lineHeight: "1.7", textAlign: "justify", maxWidth: "1100px", marginBottom: isMobile || isTablet ? "25px" : "35px" }}>
                 <p style={{ margin: 0 }}>
-                  <strong>Disclaimer:</strong> We are an authorised marketing partner for this project. Marketing Partner RERA Number
-                  – A51700026410. Provided content is given by respective owners and this website is for informational purposes only.
-                  Prices mentioned are subject to change without prior notice and properties are subject to availability. You may receive
-                  calls, SMS or emails on the details registered with us.
+                  <strong>Disclaimer:</strong> We are an authorised marketing partner for this project. Provided content is for informational purposes only.
+                  Prices mentioned are subject to change without prior notice and properties are subject to availability. You may receive calls, SMS or emails on the details registered with us.
                 </p>
               </div>
 
               <hr style={{ border: "0", borderTop: "1px solid #eee", marginBottom: isMobile || isTablet ? "15px" : "20px" }} />
 
-              <div style={{ 
-                textAlign: "center", 
-                fontSize: isMobile || isTablet ? "12px" : "14px", 
-                color: "#1f2937" 
-              }}>
+              <div style={{ textAlign: "center", fontSize: isMobile || isTablet ? "12px" : "14px", color: "#1f2937" }}>
                 <p style={{ margin: 0 }}>
-                  © 2026 Sanskriti  Building Plot 210 |
+                  © 2026 Sanskriti |
                   <a href="#" style={{ color: "#1f2937", textDecoration: "none", margin: "0 6px" }}>
                     Terms & Conditions
                   </a>
@@ -2099,7 +2068,7 @@ Rates of Interest and Disclosures on Website) Rules,2017
           </section>
         </div>
 
-        {/* RIGHT SIDE FORM (desktop only, mobile already has form after hero) */}
+        {/* RIGHT SIDE FORM (desktop only) */}
         {!isMobile && !isTablet && (
           <aside
             className="right-pane"
@@ -2123,8 +2092,8 @@ Rates of Interest and Disclosures on Website) Rules,2017
                 border: "none",
                 padding: "12px",
                 width: "100%",
-                borderRadius: "6px",
-                fontWeight: "bold",
+                borderRadius: "10px",
+                fontWeight: 900,
                 marginBottom: "18px",
                 cursor: "pointer",
                 boxShadow: "0 10px 18px rgba(243,156,18,0.22)",
@@ -2137,7 +2106,7 @@ Rates of Interest and Disclosures on Website) Rules,2017
 
             <div style={{ marginTop: "auto", textAlign: "center", paddingTop: "18px", paddingBottom: "10px" }}>
               <div style={{ fontSize: "24px" }}>📄</div>
-              <p style={{ fontSize: "11px", fontWeight: "bold", margin: "8px 0 0 0", lineHeight: 1.2 }}>
+              <p style={{ fontSize: "11px", fontWeight: 900, margin: "8px 0 0 0", lineHeight: 1.2 }}>
                 Download <br /> Brochure
               </p>
 
@@ -2147,11 +2116,11 @@ Rates of Interest and Disclosures on Website) Rules,2017
                   marginTop: 10,
                   background: "#fff",
                   border: "1px solid #ddd",
-                  padding: "8px 10px",
-                  borderRadius: 8,
+                  padding: "10px 12px",
+                  borderRadius: 12,
                   cursor: "pointer",
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 900,
                 }}
               >
                 Open Brochure
@@ -2307,9 +2276,9 @@ Rates of Interest and Disclosures on Website) Rules,2017
                   padding: "30px 20px",
                 }}
               >
-                <h3 style={{ color: "#e66a00", marginBottom: 20 }}>We Promise</h3>
+                <h3 style={{ color: "#e66a00", marginBottom: 20, fontWeight: 900 }}>We Promise</h3>
 
-                {["Instant Call Back", "Free Site Visit", "Unmatched Price"].map((text) => (
+                {["Instant Call Back", "Free Site Visit", "Best Offers"].map((text) => (
                   <div
                     key={text}
                     style={{
@@ -2318,7 +2287,7 @@ Rates of Interest and Disclosures on Website) Rules,2017
                       gap: 12,
                       marginBottom: 18,
                       color: "#e66a00",
-                      fontWeight: 600,
+                      fontWeight: 800,
                       fontSize: 14,
                     }}
                   >
@@ -2331,6 +2300,7 @@ Rates of Interest and Disclosures on Website) Rules,2017
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        fontWeight: 900,
                       }}
                     >
                       ✓
@@ -2341,9 +2311,12 @@ Rates of Interest and Disclosures on Website) Rules,2017
               </div>
 
               <div style={{ flex: 1, padding: "30px 30px" }}>
-                <h3 style={{ marginBottom: 25 }}>
+                <h3 style={{ marginBottom: 10, fontWeight: 900 }}>
                   Register Here And Avail The <span style={{ color: "#e66a00" }}>Best Offers!!</span>
                 </h3>
+                <div style={{ marginBottom: 18, color: "#444", fontSize: 13.5, lineHeight: 1.5 }}>
+                  {leadAction === "brochure" ? "Brochure will download after submit." : "We will contact you shortly."}
+                </div>
 
                 {done ? (
                   <div
@@ -2356,7 +2329,7 @@ Rates of Interest and Disclosures on Website) Rules,2017
                       background: "rgba(0, 150, 0, 0.08)",
                       border: "1px solid rgba(0,150,0,0.2)",
                       color: "#0a7a0a",
-                      fontWeight: 700,
+                      fontWeight: 800,
                     }}
                   >
                     Submitted ✓
@@ -2364,7 +2337,7 @@ Rates of Interest and Disclosures on Website) Rules,2017
                 ) : null}
 
                 {errorText ? (
-                  <div style={{ marginBottom: 12, fontSize: 12, color: "#b00020", fontWeight: 600 }}>
+                  <div style={{ marginBottom: 12, fontSize: 12, color: "#b00020", fontWeight: 700 }}>
                     {errorText}
                   </div>
                 ) : null}
@@ -2386,120 +2359,12 @@ Rates of Interest and Disclosures on Website) Rules,2017
                 <div style={{ display: "flex", gap: 10 }}>
                   <select style={{ ...inputStyle, marginBottom: 16, width: 140, flex: "0 0 140px" }}>
                     <option>India (+91)</option>
-<option>UK (+44)</option>
-<option>USA (+1)</option>
-
-<option>Algeria (+213)</option>
-<option>Andorra (+376)</option>
-<option>Angola (+244)</option>
-<option>Anguilla (+1264)</option>
-<option>Antigua & Barbuda (+1268)</option>
-<option>Argentina (+54)</option>
-<option>Armenia (+374)</option>
-<option>Aruba (+297)</option>
-<option>Australia (+61)</option>
-<option>Austria (+43)</option>
-<option>Azerbaijan (+994)</option>
-<option>Bahamas (+1242)</option>
-<option>Bahrain (+973)</option>
-<option>Bangladesh (+880)</option>
-<option>Barbados (+1246)</option>
-<option>Belarus (+375)</option>
-<option>Belgium (+32)</option>
-<option>Belize (+501)</option>
-<option>Benin (+229)</option>
-<option>Bermuda (+1441)</option>
-<option>Bhutan (+975)</option>
-<option>Bolivia (+591)</option>
-<option>Bosnia Herzegovina (+387)</option>
-<option>Botswana (+267)</option>
-<option>Brazil (+55)</option>
-<option>Brunei (+673)</option>
-<option>Bulgaria (+359)</option>
-<option>Burkina Faso (+226)</option>
-<option>Burundi (+257)</option>
-<option>Cambodia (+855)</option>
-<option>Cameroon (+237)</option>
-<option>Canada (+1)</option>
-<option>Cape Verde Islands (+238)</option>
-<option>Cayman Islands (+1345)</option>
-<option>Central African Republic (+236)</option>
-<option>Chile (+56)</option>
-<option>China (+86)</option>
-<option>Colombia (+57)</option>
-<option>Comoros (+269)</option>
-<option>Congo (+242)</option>
-<option>Cook Islands (+682)</option>
-<option>Costa Rica (+506)</option>
-<option>Croatia (+385)</option>
-<option>Cuba (+53)</option>
-<option>Cyprus North (+90392)</option>
-<option>Cyprus South (+357)</option>
-<option>Czech Republic (+42)</option>
-<option>Denmark (+45)</option>
-<option>Djibouti (+253)</option>
-<option>Dominica (+1809)</option>
-<option>Dominican Republic (+1809)</option>
-<option>Ecuador (+593)</option>
-<option>Egypt (+20)</option>
-<option>El Salvador (+503)</option>
-<option>Equatorial Guinea (+240)</option>
-<option>Eritrea (+291)</option>
-<option>Estonia (+372)</option>
-<option>Ethiopia (+251)</option>
-<option>Finland (+358)</option>
-<option>France (+33)</option>
-<option>Germany (+49)</option>
-<option>Ghana (+233)</option>
-<option>Greece (+30)</option>
-<option>Hong Kong (+852)</option>
-<option>Hungary (+36)</option>
-<option>Iceland (+354)</option>
-<option>Indonesia (+62)</option>
-<option>Iran (+98)</option>
-<option>Iraq (+964)</option>
-<option>Ireland (+353)</option>
-<option>Israel (+972)</option>
-<option>Italy (+39)</option>
-<option>Japan (+81)</option>
-<option>Jordan (+962)</option>
-<option>Kazakhstan (+7)</option>
-<option>Kenya (+254)</option>
-<option>Korea North (+850)</option>
-<option>Korea South (+82)</option>
-<option>Kuwait (+965)</option>
-<option>Malaysia (+60)</option>
-<option>Maldives (+960)</option>
-<option>Mexico (+52)</option>
-<option>Nepal (+977)</option>
-<option>Netherlands (+31)</option>
-<option>New Zealand (+64)</option>
-<option>Nigeria (+234)</option>
-<option>Norway (+47)</option>
-<option>Oman (+968)</option>
-<option>Pakistan (+92)</option>
-<option>Philippines (+63)</option>
-<option>Poland (+48)</option>
-<option>Portugal (+351)</option>
-<option>Qatar (+974)</option>
-<option>Romania (+40)</option>
-<option>Russia (+7)</option>
-<option>Saudi Arabia (+966)</option>
-<option>Singapore (+65)</option>
-<option>South Africa (+27)</option>
-<option>Spain (+34)</option>
-<option>Sri Lanka (+94)</option>
-<option>Sweden (+46)</option>
-<option>Switzerland (+41)</option>
-<option>Thailand (+66)</option>
-<option>Turkey (+90)</option>
-<option>UAE (+971)</option>
-<option>Ukraine (+380)</option>
-<option>Uruguay (+598)</option>
-<option>Vietnam (+84)</option>
-<option>Zambia (+260)</option>
-<option>Zimbabwe (+263)</option>
-
+                    <option>UK (+44)</option>
+                    <option>USA (+1)</option>
+                    <option>UAE (+971)</option>
+                    <option>Singapore (+65)</option>
+                    <option>Canada (+1)</option>
+                    <option>Australia (+61)</option>
                   </select>
 
                   <input
@@ -2519,14 +2384,14 @@ Rates of Interest and Disclosures on Website) Rules,2017
                   disabled={!isValid || loading}
                   onClick={() => submitEnquiry({ autoCloseModal: true, downloadAfter: leadAction })}
                   style={{
-                    marginTop: 22,
+                    marginTop: 10,
                     width: "100%",
                     padding: "14px",
                     background: "#e66a00",
                     color: "#fff",
                     border: "none",
-                    borderRadius: 4,
-                    fontWeight: 700,
+                    borderRadius: 6,
+                    fontWeight: 900,
                     cursor: !isValid || loading ? "not-allowed" : "pointer",
                     fontSize: 16,
                     opacity: !isValid || loading ? 0.7 : 1,
@@ -2534,10 +2399,6 @@ Rates of Interest and Disclosures on Website) Rules,2017
                 >
                   {loading ? "Submitting..." : "Get Instant Call Back"}
                 </button>
-
-                <div style={{ marginTop: 10, fontSize: 12, color: "#666" }}>
-                  {leadAction === "brochure" ? "Brochure will download after submit." : null}
-                </div>
               </div>
             </div>
 
@@ -2547,7 +2408,7 @@ Rates of Interest and Disclosures on Website) Rules,2017
                 color: "#fff",
                 padding: "14px",
                 textAlign: "center",
-                fontWeight: 700,
+                fontWeight: 900,
                 fontSize: 16,
               }}
             >
