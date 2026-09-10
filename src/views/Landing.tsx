@@ -4,7 +4,7 @@ const PROJECT_NAME = "Sanskriti by Jem World Group";
 const PROJECT_SUB = "Exclusive 3 BHK Villa Floors • One Floor, One Apartment";
 const LOCATION_LINE = "Daulat Nagar, Borivali East, Mumbai 400066";
 const IMAGE_PATHS: string[] = ["/back1.jpeg", "/g7.jpeg", "/back3.jpeg", "/g6.jpeg"];
-const LOGO_URL = "/images/sanskriti-logo.jpeg";
+const LOGO_URLS = ["/images/sanskriti-logo.png", "/images/sanskriti-logo.jpeg", "/images/sanskriti-logo.jpg"];
 const HERO_VIDEO_URL = "/images/sanskriti_video_bg.mp4";
 const amenitiesData = [
   { title: "Looby", img: "/g1.jpeg" },
@@ -79,7 +79,8 @@ export default function LandingPage() {
   const [heroVideoReady, setHeroVideoReady] = useState(false);
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
   const [heroVideoAspectRatio, setHeroVideoAspectRatio] = useState("16 / 9");
-  const [logoFailed, setLogoFailed] = useState(false);
+  const [logoIndex, setLogoIndex] = useState(0);
+  const logoFailed = logoIndex >= LOGO_URLS.length;
 
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [leadAction, setLeadAction] = useState<LeadAction>("generic");
@@ -96,7 +97,7 @@ export default function LandingPage() {
   const previewRef = useRef(previewImg);
   const videoRef = useRef(showVideo);
   const loadingRef = useRef(loading);
-  const lastInteractRef = useRef(Date.now());
+  const leadOpenedOnceRef = useRef(false);
 
   useEffect(() => {
     leadOpenRef.current = showLeadModal;
@@ -150,6 +151,7 @@ export default function LandingPage() {
   }, [form.name, form.email, mobile10]);
 
   function openLead(action: LeadAction) {
+    leadOpenedOnceRef.current = true;
     setLeadAction(action);
     setErrorText("");
     setShowLeadModal(true);
@@ -195,34 +197,16 @@ export default function LandingPage() {
   }
 
   useEffect(() => {
-    const bump = () => (lastInteractRef.current = Date.now());
-    window.addEventListener("scroll", bump, { passive: true });
-    window.addEventListener("touchstart", bump, { passive: true });
-    window.addEventListener("mousemove", bump);
-    window.addEventListener("keydown", bump);
-    window.addEventListener("click", bump);
-    return () => {
-      window.removeEventListener("scroll", bump);
-      window.removeEventListener("touchstart", bump);
-      window.removeEventListener("mousemove", bump);
-      window.removeEventListener("keydown", bump);
-      window.removeEventListener("click", bump);
-    };
-  }, []);
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
+    const id = window.setTimeout(() => {
+      if (leadOpenedOnceRef.current) return;
       if (leadOpenRef.current) return;
       if (previewRef.current) return;
       if (videoRef.current) return;
       if (loadingRef.current) return;
-
-      if (Date.now() - lastInteractRef.current < 4500) return;
-
       openLead("callback");
-    }, 5000);
+    }, 30000);
 
-    return () => window.clearInterval(id);
+    return () => window.clearTimeout(id);
   }, []);
 
   const headerHeight = 65;
@@ -489,32 +473,15 @@ export default function LandingPage() {
           alignItems: "center",
           borderBottom: `1px solid ${ACCENT_COLORS.teal}30`,
           backgroundColor: "#fff",
-          zIndex: 1000,
-          position: "sticky",
+          zIndex: isMobile || isTablet ? 10000 : 1000,
+          position: isMobile || isTablet ? "fixed" : "sticky",
           top: 0,
+          left: isMobile || isTablet ? 0 : undefined,
+          right: isMobile || isTablet ? 0 : undefined,
           width: "100%",
+          boxShadow: isMobile || isTablet ? "0 2px 12px rgba(10,31,68,0.10)" : "none",
         }}
       >
-        {(isMobile || isTablet) && (
-          <button
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            style={{
-              background: "none",
-              border: "none",
-              fontSize: "24px",
-              padding: "0 20px",
-              cursor: "pointer",
-              color: DEEP_NAVY,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minWidth: "60px",
-            }}
-          >
-            ☰
-          </button>
-        )}
-
         <button
           type="button"
           onClick={() => {
@@ -526,26 +493,26 @@ export default function LandingPage() {
           }}
           aria-label="Sanskriti - Home"
           style={{
-            width: isMobile || isTablet ? "138px" : "154px",
+            width: isMobile || isTablet ? "160px" : "154px",
             height: "100%",
-            padding: isMobile || isTablet ? "4px 12px" : "2px 7px",
+            padding: isMobile || isTablet ? "4px 10px" : "2px 7px",
             flexShrink: 0,
             background: "#fff",
             border: "none",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: isMobile || isTablet ? "flex-start" : "center",
             cursor: "pointer",
           }}
         >
           {!logoFailed ? (
             <img
-              src={LOGO_URL}
+              src={LOGO_URLS[logoIndex]}
               alt="Sanskriti"
-              onError={() => setLogoFailed(true)}
+              onError={() => setLogoIndex((current) => current + 1)}
               style={{
                 display: "block",
-                maxWidth: isMobile || isTablet ? "112px" : "140px",
+                maxWidth: isMobile || isTablet ? "132px" : "140px",
                 maxHeight: isMobile || isTablet ? "58px" : "62px",
                 width: "auto",
                 height: "auto",
@@ -711,24 +678,28 @@ export default function LandingPage() {
         )}
 
         {(isMobile || isTablet) && (
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", paddingRight: "15px" }}>
-            <a
-              href={`tel:${PHONE}`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "8px 12px",
-                borderRadius: "6px",
-                background: `${ACCENT_COLORS.lightBlue}15`,
-                color: ACCENT_COLORS.mediumBlue,
-                textDecoration: "none",
-                fontSize: "14px",
-                fontWeight: "600",
-              }}
-            >
-              📞 {isMobile ? "" : "Call"}
-            </a>
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            aria-label={showMobileMenu ? "Close menu" : "Open menu"}
+            style={{
+              marginLeft: "auto",
+              width: 58,
+              height: "100%",
+              padding: 0,
+              background: "none",
+              border: "none",
+              color: DEEP_NAVY,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 27,
+              lineHeight: 1,
+            }}
+          >
+            {showMobileMenu ? "×" : "☰"}
+          </button>
         )}
       </header>
 
@@ -749,22 +720,6 @@ export default function LandingPage() {
             padding: "20px",
           }}
         >
-          <button
-            onClick={() => setShowMobileMenu(false)}
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "20px",
-              background: "none",
-              border: "none",
-              color: "#fff",
-              fontSize: "30px",
-              cursor: "pointer",
-            }}
-          >
-            ×
-          </button>
-
           {[
             { label: "Home", id: "home", icon: "🏠" },
             { label: "Price", id: "price", icon: "💰" },
@@ -847,7 +802,15 @@ export default function LandingPage() {
       )}
 
       
-      <div className="layout-wrap" style={{ display: "flex", flex: 1, overflow: isMobile || isTablet ? "visible" : "hidden" }}>
+      <div
+        className="layout-wrap"
+        style={{
+          display: "flex",
+          flex: 1,
+          overflow: isMobile || isTablet ? "visible" : "hidden",
+          marginTop: isMobile || isTablet ? headerHeight : 0,
+        }}
+      >
         
         <div
           className="hide-scroll left-pane"
@@ -1034,7 +997,7 @@ export default function LandingPage() {
                     fontSize: "13px",
                   }}
                 >
-                  70% Work Completed • Possession: June 2027
+                  OC Received • Possession: June 2027
                 </div>
 
                 <div style={{ padding: "18px", textAlign: "center" }}>
@@ -1161,7 +1124,7 @@ export default function LandingPage() {
                     fontSize: "14px",
                   }}
                 >
-                  70% Work Completed • Possession: June 2027
+                  OC Received • Possession: June 2027
                 </div>
 
                 <div style={{ padding: "20px", textAlign: "center" }}>
@@ -1700,6 +1663,59 @@ export default function LandingPage() {
                 >
                   <b style={{ color: ACCENT_COLORS.teal }}>Offer:</b> Pay Just <b>10%</b> Now & Enjoy <b>NO EMI</b> Till Possession • <b>10:90</b> / Flexi payment options available.
                 </div>
+
+                <div
+                  style={{
+                    marginTop: 18,
+                    padding: isMobile ? "18px 15px" : "20px 22px",
+                    background: "#fff",
+                    border: `1px solid ${ACCENT_COLORS.teal}30`,
+                    borderRadius: 12,
+                    boxShadow: "0 8px 22px rgba(10,31,68,0.06)",
+                    textAlign: "center",
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: 0,
+                      color: DEEP_NAVY,
+                      fontSize: isMobile ? 19 : 22,
+                      lineHeight: 1.35,
+                      fontWeight: 900,
+                    }}
+                  >
+                    Sanskriti Floor Plans (3 BHK Villa Floors)
+                  </h3>
+                  <p
+                    style={{
+                      maxWidth: 760,
+                      margin: "10px auto 0",
+                      color: "#4A5568",
+                      fontSize: isMobile ? 13.5 : 14.5,
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    Floor plans are available in the brochure. Submit your details to receive the brochure instantly.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => openLead("brochure")}
+                    style={{
+                      marginTop: 16,
+                      minWidth: isMobile ? "100%" : 210,
+                      padding: isMobile ? "12px 18px" : "12px 24px",
+                      background: `linear-gradient(90deg, ${DEEP_NAVY}, ${ACCENT_COLORS.teal})`,
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 9,
+                      fontWeight: 900,
+                      cursor: "pointer",
+                      fontSize: isMobile ? 14 : 15,
+                    }}
+                  >
+                    Download Brochure
+                  </button>
+                </div>
               </div>
 
               <div
@@ -1863,37 +1879,6 @@ export default function LandingPage() {
                 }
               `}
             </style>
-          </section>
-
-          
-          <section
-            className="section-pad"
-            style={{
-              padding: isMobile || isTablet ? "30px 20px" : "60px 50px",
-              backgroundColor: `${ACCENT_COLORS.teal}05`,
-            }}
-          >
-            <h2 style={{ color: DEEP_NAVY, fontSize: isMobile || isTablet ? "22px" : "26px", marginBottom: "16px", marginTop: 0, fontWeight: 900 }}>
-              Sanskriti Floor Plans (3 BHK Villa Floors)
-            </h2>
-            <div style={{ color: DEEP_NAVY, fontSize: isMobile ? 14 : 15.5, lineHeight: 1.7, marginBottom: 14, maxWidth: 950 }}>
-              Floor plans are available in the brochure. Submit your details to receive the brochure instantly.
-            </div>
-            <button
-              onClick={() => openLead("brochure")}
-              style={{
-                backgroundColor: DEEP_NAVY,
-                color: "#fff",
-                border: "none",
-                padding: isMobile || isTablet ? "10px 20px" : "12px 25px",
-                borderRadius: "10px",
-                fontWeight: 900,
-                cursor: "pointer",
-                fontSize: isMobile || isTablet ? "14px" : "16px",
-              }}
-            >
-              Download Brochure
-            </button>
           </section>
 
           
@@ -2139,8 +2124,8 @@ export default function LandingPage() {
               fontFamily: "'Poppins', 'Segoe UI', sans-serif",
             }}
           >
-            <div style={{ marginBottom: isMobile || isTablet ? "20px" : "24px" }}>
-              <h2 style={{ color: DEEP_NAVY, fontSize: isMobile || isTablet ? "22px" : "28px", margin: 0, fontWeight: 900 }}>
+            <div style={{ marginBottom: isMobile || isTablet ? "20px" : "24px", textAlign: "center" }}>
+              <h2 style={{ color: DEEP_NAVY, fontSize: isMobile || isTablet ? "22px" : "28px", margin: 0, fontWeight: 900, textAlign: "center" }}>
                 Virtual Site Visit
               </h2>
             </div>
@@ -2155,9 +2140,7 @@ export default function LandingPage() {
                 borderRadius: "12px",
                 overflow: "hidden",
                 boxShadow: `0 8px 24px ${DEEP_NAVY}30`,
-                cursor: "pointer",
               }}
-              onClick={() => openLead("generic")}
             >
               <img src="/g7.jpeg" alt="Virtual Site Visit" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
 
@@ -2174,30 +2157,36 @@ export default function LandingPage() {
                   color: "#fff",
                 }}
               >
-                <div
+                <button
+                  type="button"
+                  onClick={() => setShowVideo(true)}
+                  aria-label="Play virtual site visit"
                   style={{
                     width: isMobile || isTablet ? "60px" : "80px",
                     height: isMobile || isTablet ? "60px" : "80px",
                     backgroundColor: "#fff",
+                    border: "none",
                     borderRadius: "50%",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: isMobile || isTablet ? "12px" : "18px",
                     boxShadow: `0 0 22px ${ACCENT_COLORS.teal}60`,
+                    cursor: "pointer",
+                    padding: 0,
                   }}
                 >
-                  <div
+                  <span
                     style={{
                       width: 0,
                       height: 0,
                       borderTop: isMobile || isTablet ? "10px solid transparent" : "14px solid transparent",
                       borderBottom: isMobile || isTablet ? "10px solid transparent" : "14px solid transparent",
-                      borderLeft: isMobile || isTablet ? "18px solid #333" : "26px solid #333",
+                      borderLeft: isMobile || isTablet ? `18px solid ${DEEP_NAVY}` : `26px solid ${DEEP_NAVY}`,
                       marginLeft: "5px",
                     }}
                   />
-                </div>
+                </button>
 
                 <h3 style={{ fontSize: isMobile || isTablet ? "20px" : "32px", margin: "0 0 6px 0", fontWeight: 900, lineHeight: "1.2" }}>
                   VIRTUAL SITE VISIT
@@ -2231,7 +2220,7 @@ export default function LandingPage() {
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <source src="/videos/virtual-tour.mp4" type="video/mp4" />
+                  <source src={HERO_VIDEO_URL} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               </div>
@@ -2241,7 +2230,7 @@ export default function LandingPage() {
           
           <section
             style={{
-              padding: isMobile || isTablet ? "40px 20px" : "70px 50px",
+              padding: isMobile || isTablet ? "28px 16px 22px" : "36px 50px 24px",
               backgroundColor: "#fff",
               borderTop: `1px solid ${ACCENT_COLORS.teal}30`,
               fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif",
@@ -2252,8 +2241,8 @@ export default function LandingPage() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: isMobile || isTablet ? "25px" : "35px",
-                gap: "16px",
+                marginBottom: isMobile || isTablet ? "18px" : "22px",
+                gap: "12px",
                 flexWrap: "wrap",
               }}
             >
@@ -2263,16 +2252,15 @@ export default function LandingPage() {
 
               <button
                 onClick={() => {
-                  const phoneNumber = "+919892046053 / +919967817637";
                   const message = "Hi, I am interested in Sanskriti by Jem World Group, Borivali East. Please share price, availability & site visit details. Thanks.";
-                  const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
                   window.open(url, "_blank");
                 }}
                 style={{
                   background: `linear-gradient(90deg, ${DEEP_NAVY}, ${ACCENT_COLORS.teal})`,
                   color: "#fff",
                   border: "none",
-                  padding: isMobile || isTablet ? "10px 20px" : "12px 28px",
+                  padding: isMobile || isTablet ? "9px 18px" : "10px 24px",
                   borderRadius: "10px",
                   fontSize: "14px",
                   fontWeight: 900,
@@ -2283,71 +2271,96 @@ export default function LandingPage() {
               </button>
             </div>
 
-            <div style={{ color: DEEP_NAVY, lineHeight: "1.9", fontSize: isMobile || isTablet ? "14px" : "15.5px", maxWidth: "1100px" }}>
-             <p style={{ marginBottom: "18px", textAlign: "justify" }}>
-  {PROJECT_NAME} is a distinguished residential development by{" "}
-  <span style={{ color: ACCENT_COLORS.teal, fontWeight: "bold" }}>
-    Jem World Group
-  </span>
-  , backed by a legacy of trust built over 54+ years. Rooted in thoughtful planning
-  and uncompromising quality, the project is designed to offer privacy, comfort,
-  and refined living. Featuring spacious, Vastu-compliant homes with well-ventilated
-  layouts, {PROJECT_NAME} seamlessly blends modern design with everyday convenience,
-  ensuring excellent connectivity and a superior lifestyle experience.
-</p>
+            <div style={{ color: DEEP_NAVY, lineHeight: "1.65", fontSize: isMobile || isTablet ? "14px" : "15px", width: "100%" }}>
+              <p style={{ margin: "0 0 14px", textAlign: isMobile ? "left" : "justify" }}>
+                {PROJECT_NAME} is a distinguished residential development by{" "}
+                <span style={{ color: ACCENT_COLORS.teal, fontWeight: "bold" }}>Jem World Group</span>, backed by a legacy of trust built over 54+ years. Rooted in thoughtful planning and uncompromising quality, the project is designed to offer privacy, comfort, and refined living. Featuring spacious, Vastu-compliant homes with well-ventilated layouts, {PROJECT_NAME} seamlessly blends modern design with everyday convenience, ensuring excellent connectivity and a superior lifestyle experience.
+              </p>
 
               <div
                 style={{
-                  marginBottom: "18px",
-                  padding: isMobile || isTablet ? "14px" : "18px 20px",
+                  display: "grid",
+                  gridTemplateColumns: isMobile || isTablet ? "1fr" : "minmax(300px, 0.8fr) minmax(520px, 1.2fr)",
+                  gap: isMobile || isTablet ? "12px" : "0",
+                  marginBottom: "14px",
                   backgroundColor: `${ACCENT_COLORS.lightBlue}05`,
                   border: `1px solid ${ACCENT_COLORS.teal}30`,
                   borderRadius: "12px",
+                  overflow: "hidden",
                 }}
               >
-                <p style={{ margin: "6px 0", fontWeight: 900, color: DEEP_NAVY }}>{PROJECT_NAME}</p>
-                <p style={{ margin: "6px 0", color: ACCENT_COLORS.teal }}>
-                  MahaRERA – <strong style={{ color: ACCENT_COLORS.burgundy }}>P51800011430</strong>
-                </p>
-                <p style={{ margin: "6px 0", color: ACCENT_COLORS.teal }}>
-                  Possession – <strong style={{ color: ACCENT_COLORS.burgundy }}>June 2027</strong>
-                </p>
+                <div
+                  style={{
+                    padding: isMobile || isTablet ? "14px" : "16px 20px",
+                    borderRight: !isMobile && !isTablet ? `1px solid ${ACCENT_COLORS.teal}25` : "none",
+                    borderBottom: isMobile || isTablet ? `1px solid ${ACCENT_COLORS.teal}25` : "none",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    gap: "6px",
+                  }}
+                >
+                  <p style={{ margin: 0, fontWeight: 900, color: DEEP_NAVY, fontSize: isMobile ? "14px" : "15px" }}>{PROJECT_NAME}</p>
+                  <p style={{ margin: 0, color: ACCENT_COLORS.teal }}>
+                    MahaRERA – <strong style={{ color: ACCENT_COLORS.burgundy }}>P51800011430</strong>
+                  </p>
+                  <p style={{ margin: 0, color: ACCENT_COLORS.teal }}>
+                    Possession – <strong style={{ color: ACCENT_COLORS.burgundy }}>June 2027</strong>
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    padding: isMobile || isTablet ? "14px" : "16px 20px",
+                    display: "grid",
+                    gap: "8px",
+                    alignContent: "center",
+                    color: DEEP_NAVY,
+                    fontSize: isMobile ? "13px" : "14px",
+                  }}
+                >
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "108px 1fr", gap: "6px 8px", alignItems: "start" }}>
+                    <strong style={{ color: ACCENT_COLORS.teal }}>✓ Site Address:</strong>
+                    <span>Sanskriti Building Plot 210, Daulat Nagar Road No. 10, Borivali East, Mumbai 400066</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "108px 1fr", gap: "6px 8px", alignItems: "start" }}>
+                    <strong style={{ color: ACCENT_COLORS.teal }}>✓ Contact Us:</strong>
+                    <span>{PHONE}</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "108px 1fr", gap: "6px 8px", alignItems: "start" }}>
+                    <strong style={{ color: ACCENT_COLORS.teal }}>✓ Email Id:</strong>
+                    <a href={`mailto:${EMAIL}`} style={{ color: DEEP_NAVY, textDecoration: "none" }}>{EMAIL}</a>
+                  </div>
+                </div>
               </div>
 
-              <p style={{ fontSize: isMobile || isTablet ? "12px" : "13.5px", color: ACCENT_COLORS.teal, marginBottom: "40px" }}>
+              <p style={{ fontSize: isMobile || isTablet ? "12px" : "13px", color: ACCENT_COLORS.teal, margin: "0 0 16px" }}>
                 The promoter shall execute and register a conveyance deed in favour of the allottee / association of allottees as per applicable rules.
               </p>
             </div>
 
-            <hr style={{ border: "0", borderTop: `1px solid ${ACCENT_COLORS.teal}30`, margin: isMobile || isTablet ? "30px 0" : "40px 0" }} />
-
-            <footer style={{ padding: isMobile || isTablet ? "20px 0" : "30px 0", fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" }}>
-              <div style={{ fontSize: isMobile || isTablet ? "13px" : "14px", lineHeight: "1.9", color: DEEP_NAVY, marginBottom: isMobile || isTablet ? "20px" : "30px", maxWidth: "1100px" }}>
-                <div style={{ display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", gap: isMobile || isTablet ? "8px" : "10px", marginBottom: "12px" }}>
-                  <span style={{ fontWeight: 900, minWidth: isMobile || isTablet ? "auto" : "120px", color: ACCENT_COLORS.teal }}>✓ Site Address:</span>
-                  <span>Sanskriti Building Plot 210, Daulat Nagar Road No. 10, Borivali East, Mumbai 400066</span>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", gap: isMobile || isTablet ? "8px" : "10px" }}>
-                  <span style={{ fontWeight: 900, minWidth: isMobile || isTablet ? "auto" : "120px", color: ACCENT_COLORS.teal }}>✓ Contact Us:</span>
-                  <span>{PHONE}</span>
-                </div>
-                <div style={{ display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", gap: isMobile || isTablet ? "8px" : "10px" }}>
-                  <span style={{ fontWeight: 900, minWidth: isMobile || isTablet ? "auto" : "120px", color: ACCENT_COLORS.teal }}>✓ Email Id:</span>
-                  <span>{EMAIL}</span>
-                </div>
-              </div>
-
-              <div style={{ fontSize: isMobile || isTablet ? "12px" : "13px", color: ACCENT_COLORS.teal, lineHeight: "1.7", textAlign: "justify", maxWidth: "1100px", marginBottom: isMobile || isTablet ? "25px" : "35px" }}>
+            <footer
+              style={{
+                padding: isMobile || isTablet ? "14px 0 4px" : "16px 0 2px",
+                borderTop: `1px solid ${ACCENT_COLORS.teal}30`,
+                fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif",
+              }}
+            >
+              <div style={{ fontSize: isMobile || isTablet ? "12px" : "13px", color: ACCENT_COLORS.teal, lineHeight: "1.6", marginBottom: "12px" }}>
                 <p style={{ margin: 0 }}>
-                  <strong style={{ color: DEEP_NAVY }}>Disclaimer:</strong>This is authorised website of developer.
-
+                  <strong style={{ color: DEEP_NAVY }}>Disclaimer: </strong>This is authorised website of developer.
                 </p>
               </div>
 
-              <hr style={{ border: "0", borderTop: `1px solid ${ACCENT_COLORS.teal}30`, marginBottom: isMobile || isTablet ? "15px" : "20px" }} />
-
-              <div style={{ textAlign: "center", fontSize: isMobile || isTablet ? "12px" : "14px", color: DEEP_NAVY }}>
+              <div
+                style={{
+                  textAlign: "center",
+                  fontSize: isMobile || isTablet ? "12px" : "14px",
+                  color: DEEP_NAVY,
+                  borderTop: `1px solid ${ACCENT_COLORS.teal}25`,
+                  paddingTop: "12px",
+                }}
+              >
                 <p style={{ margin: 0 }}>
                   © 2026 Sanskriti |
                   <a href="#" style={{ color: ACCENT_COLORS.mediumBlue, textDecoration: "none", margin: "0 6px" }}>
