@@ -211,6 +211,7 @@ export default function LandingPage() {
 
   const headerHeight = 65;
   const rightSectionWidth = "22%";
+  const headerRightWidth = "28%";
 
   function scrollToSection(sectionId: string) {
     const target = document.getElementById(sectionId);
@@ -600,45 +601,15 @@ export default function LandingPage() {
               </div>
             ))}
 
-            <div
-              style={{
-                height: "100%",
-                flex: "0 0 clamp(104px, 7.4vw, 126px)",
-                minWidth: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "0 clamp(6px, .55vw, 10px)",
-              }}
-            >
-              <a
-                href="/admin"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  padding: "7px clamp(10px, .75vw, 14px)",
-                  borderRadius: "999px",
-                  border: `1px solid ${DEEP_NAVY}40`,
-                  fontSize: "clamp(10px, .75vw, 12px)",
-                  whiteSpace: "nowrap",
-                  color: DEEP_NAVY,
-                  textDecoration: "none",
-                  background: "#fff",
-                  fontWeight: 600,
-                }}
-              >
-                Admin Login
-              </a>
-            </div>
           </nav>
         )}
 
         {!isMobile && !isTablet && (
-          <div className="header-right" style={{ display: "flex", height: "100%", width: rightSectionWidth }}>
+          <div className="header-right" style={{ display: "flex", height: "100%", width: headerRightWidth, flexShrink: 0 }}>
             <div
               onClick={() => openLead("costing")}
               style={{
-                flex: 1,
+                flex: "0 0 39%",
                 backgroundColor: ACCENT_COLORS.mediumBlue,
                 color: "#fff",
                 display: "flex",
@@ -659,20 +630,22 @@ export default function LandingPage() {
 
             <div
               style={{
-                flex: 1,
+                flex: "1 1 61%",
                 backgroundColor: DEEP_NAVY,
                 color: "#fff",
                 display: "flex",
                 alignItems: "center",
-                padding: "0 clamp(6px, .65vw, 10px)",
-                gap: "5px",
+                padding: "0 clamp(8px, .8vw, 14px)",
+                gap: "7px",
                 minWidth: 0,
                 justifyContent: "center",
                 whiteSpace: "nowrap",
                 textAlign: "center",
+                overflow: "hidden",
               }}
             >
-              📞 <b style={{ fontSize: "clamp(9px, .66vw, 11px)" }}>{PHONE}</b>
+              <span style={{ flexShrink: 0, fontSize: "14px", lineHeight: 1 }}>📞</span>
+              <b style={{ fontSize: "clamp(9px, .64vw, 10.5px)", lineHeight: 1.15, whiteSpace: "nowrap" }}>{PHONE}</b>
             </div>
           </div>
         )}
@@ -778,26 +751,6 @@ export default function LandingPage() {
             Download Brochure
           </button>
 
-          <a
-            href="/admin"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "15px",
-              padding: "20px 10px",
-              background: "rgba(255,255,255,0.1)",
-              border: "none",
-              color: "#fff",
-              fontSize: "16px",
-              textDecoration: "none",
-              width: "100%",
-              marginTop: "10px",
-              borderRadius: "8px",
-              justifyContent: "center",
-            }}
-          >
-            👤 Admin Login
-          </a>
         </div>
       )}
 
@@ -997,7 +950,7 @@ export default function LandingPage() {
                     fontSize: "13px",
                   }}
                 >
-                  OC Received • Possession: June 2027
+                  70% Work Completed • Possession: June 2027
                 </div>
 
                 <div style={{ padding: "18px", textAlign: "center" }}>
@@ -1124,7 +1077,7 @@ export default function LandingPage() {
                     fontSize: "14px",
                   }}
                 >
-                  OC Received • Possession: June 2027
+                  70% Work Completed • Possession: June 2027
                 </div>
 
                 <div style={{ padding: "20px", textAlign: "center" }}>
