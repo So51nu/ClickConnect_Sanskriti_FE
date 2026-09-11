@@ -950,7 +950,7 @@ export default function LandingPage() {
                     fontSize: "13px",
                   }}
                 >
-                  70% Work Completed • Possession: June 2027
+                  OC Received • Possession: June 2027
                 </div>
 
                 <div style={{ padding: "18px", textAlign: "center" }}>
@@ -1077,7 +1077,7 @@ export default function LandingPage() {
                     fontSize: "14px",
                   }}
                 >
-                  70% Work Completed • Possession: June 2027
+                  OC Received • Possession: June 2027
                 </div>
 
                 <div style={{ padding: "20px", textAlign: "center" }}>
